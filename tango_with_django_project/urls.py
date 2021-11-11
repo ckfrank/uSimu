@@ -23,7 +23,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # maps URLs starting with rango/ to be handled by rango
-    path('rango/', include('rango.urls')),
+    # maps URLs starting with usimu to be handled by rango <old app name is hard to change, but changing URLs is possible>
+    path('usimu/', include('rango.urls')),
     path('', views.index, name='index'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
