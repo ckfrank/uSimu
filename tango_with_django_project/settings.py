@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rango',
-    'registration'  # added redux
+    'registration',  # added redux
 ]
 
 MIDDLEWARE = [
@@ -128,7 +128,7 @@ MEDIA_URL = '/media/'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 # Registration params:
-REGISTRATION_OPEN = True  # allow registration
+REGISTRATION_OPEN = True # allow registration
 ACCOUNT_ACTIVATION_DAYS = 7
 REGISTRATION_AUTO_LOGIN = True  # after registration, auto login
 LOGIN_REDIRECT_URL = 'rango:index'

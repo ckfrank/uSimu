@@ -24,6 +24,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     # maps URLs starting with usimu to be handled by rango <old app name is hard to change, but changing URLs is possible>
-    path('', include('rango.urls')),
+    path('usimu/', include('rango.urls')),
     path('', views.index, name='index'),
+    path('accounts/', include("registration.backends.simple.urls"))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
