@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from django.urls.resolvers import URLPattern
 from rango import views
 
@@ -16,4 +16,5 @@ urlpatterns = [
     path('login/', views.user_login, name='login'),
     path('restricted/', views.restricted, name='restricted'),
     path('logout/', views.user_logout, name='logout'),
+    path('accounts/', include("registration.backends.simple.urls"))
 ]
