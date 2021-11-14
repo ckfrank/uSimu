@@ -47,7 +47,7 @@ def about(request):
     visitor_cookie_handler(request)
     context_dict['visits'] = request.session['visits']
 
-    response = render(request, 'rango/about.html', context=context_dict)
+    response = render(request, 'rango/contact.html', context=context_dict)
     return response
 
 def show_category(request, category_name_slug):

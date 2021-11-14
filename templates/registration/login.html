@@ -1,23 +1,48 @@
 {% extends 'rango/base.html' %}
-
+{% load staticfiles %}
 {% block title_block %}
     Login
 {% endblock %}
 
 {% block body_block %}
-<h1>Login</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10 col-lg-8 col-xl-6 mx-auto">
+                <div class="p-4 p-sm-5 bg-primary-soft rounded">
+                    {#        <img class="img-fluid" src="{% static 'images/logo.png' %}">#}
+                    <h1>Login</h1>
+                    <br>
 
-<form method="post" action=".">
-    {% csrf_token %}
-    {{ form.as_p }}
 
-    <input type="submit" value="Log In" />
-    <input type="hidden" name="text" value="{{ next }}" />
-</form>
+                    <div class="login_new">
 
-<p>
-    Not registered?
-    <a href="{% url 'registration_register' %}">Register here!</a>
-</p>
+                        <form class="form-signin" role="form" method="post" action=".">
+                            {% csrf_token %}
+                            <p><label for="inputUsername" class="sr-only">Username</label>
+                                <input type="text" name="username" id="id_username" class="form-control"
+                                       placeholder="Username" required autofocus></p>
+                            <p><label for="inputPassword" class="sr-only">Password</label>
+                                <input type="password" name="password" id="id_password" class="form-control"
+                                       placeholder="Password" required></p>
+                            <p>
+                                <button class="btn btn-primary" type="submit"
+                                        value="Submit">Log in
+                                </button>
+                            </p>
+                        </form>
+                    </div>
+                    <div>
+                        <br>
+                        <p class="middle">
+                            Not registered?
+                            <a href="{% url 'registration_register' %}">Register here!</a>
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 {% endblock %}

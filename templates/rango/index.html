@@ -5,47 +5,56 @@
     Homepage
 {% endblock %}
 
-    {% block body_block %}
-        <h1>Rango says...</h1>
-        <div>
-            {% if user.is_authenticated %}
-                howdy {{ user.username }}!
-            {% else %}
-                hey there partner!
-            {% endif %} 
-            <br />
-            <strong>{{ boldmessage }}</strong>
-        </div>
+{% block body_block %}
+    <h1>uSimu</h1>
+    <div>
+        {% if user.is_authenticated %}
+            <strong>Welcome, {{ user.username }}!</strong>
+        {% else %}
+            <strong>Please log in</strong>
+        {% endif %}
+        <br/>
+        {#            <strong>{{ boldmessage }}</strong>#}
+    </div>
 
-        <div>
-            <h2>Most Liked Categories</h2>
+
+    <div id="chartLimiter" class="chart--wrapper">
+        <!-- CHART CONTAINER -->
+        <div id="myChart">
+            <a class="zc-ref" href="https://www.zingchart.com">Powered by ZingChart</a>
+        </div>
+    </div>
+
+
+    <div>
+        <h2>Recent Submissions</h2>
         {% if categories %}
             <ul>
-            {% for category in categories %}
+                {% for category in categories %}
                     <li><a href="{% url 'rango:show_category' category.slug %}">{{ category.name }}</a></li>
-            {% endfor %}
-            </ul>
-        {% else %}
-            <strong>There are no categories present.</strong>
-        {% endif %}
-        </div>
-
-        <div>
-            <h2>Most Viewed Pages</h2>
-            {% if pages %}
-            <ul>
-                {% for page in pages %}
-                <li><a href="{{ page.url }}">{{ page.title }}</a></li>
                 {% endfor %}
             </ul>
-            {% else %}
-                <strong>There are no pages present.</strong>
-            {% endif %}
-        </div>
+        {% else %}
+            <strong>You have not submitted anything recently.</strong>
+        {% endif %}
+    </div>
 
-        
+    <div>
+        <h2>Recent Feedbacks</h2>
+        {% if pages %}
+            <ul>
+                {% for page in pages %}
+                    <li><a href="{{ page.url }}">{{ page.title }}</a></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <strong>You have no feedback recently.</strong>
+        {% endif %}
+    </div>
 
-        <div>
-            <img src="{% static 'images/rango.jpg' %}" alt="Picture of Rango" />
-        </div>
+
+
+    <div>
+        <img src="{% static 'images/rango.jpg' %}" alt="Picture of Rango"/>
+    </div>
 {% endblock %}
