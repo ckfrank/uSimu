@@ -3,6 +3,8 @@ from django.http import HttpResponse
 # import Category model
 from rango.models import Category
 from rango.models import Page
+from rango.models import Submission
+from rango.models import Feedback
 from rango.forms import CategoryForm
 from django.shortcuts import redirect
 from rango.forms import PageForm
@@ -13,14 +15,28 @@ from datetime import datetime
 def index(request):
     # Construct a dictionary to pass to the template engine as its context.
     # Note the key boldmessage matches to {{ boldmessage }} in the template!
-    # context_dict = {'boldmessage': 'Crunchy, creamy, cookie, candy, cupcake!'}
     category_list = Category.objects.order_by('-likes')[:5]
     page_list = Page.objects.order_by('-views')[:5]
+    user = request.user
+    submissions = Submission.objects.filter(owner_id=user.id).order_by('-id')[:10]
+    feedbacks = Feedback.objects.filter(referring_submission__owner_id=user.id).order_by('-id')[:10]
+    total_submissions = Submission.objects.filter(owner_id=user.id)
+    success_count = total_submissions.filter(result="Success").count()
+    pending_count = total_submissions.filter(result="Pending").count()
+    fail_count = total_submissions.filter(result="Fail").count()
+    warning_count = total_submissions.filter(result="Warning").count()
+    # print(submissions)
 
     context_dict = {}
     context_dict['boldmessage'] = 'Crunchy, creamy, cookie, candy, cupcake!'
     context_dict['categories'] = category_list
     context_dict['pages'] = page_list
+    context_dict['submissions'] = submissions
+    context_dict['feedbacks'] = feedbacks
+    context_dict['success_count'] = success_count
+    context_dict['pending_count'] = pending_count
+    context_dict['fail_count'] = fail_count
+    context_dict['warning_count'] = warning_count
 
     visitor_cookie_handler(request)
     # context_dict['visits'] = request.session['visits']
@@ -36,8 +52,8 @@ def index(request):
 
 def about(request):
     # Context dict is not needed here!
-    print(request.method)
-    print(request.user)
+    # print(request.method)
+    # print(request.user)
     # # reciving test cookie
     # if request.session.test_cookie_worked():
     #     print("TEST COOKIE WORKED!")

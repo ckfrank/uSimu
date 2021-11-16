@@ -7,54 +7,71 @@
 
 {% block body_block %}
     <h1>uSimu</h1>
+
     <div>
         {% if user.is_authenticated %}
             <strong>Welcome, {{ user.username }}!</strong>
         {% else %}
-            <strong>Please log in</strong>
+            <h2><strong>Please log in to continue</strong></h2>
         {% endif %}
+    <hr class="featurette-divider">
         <br/>
         {#            <strong>{{ boldmessage }}</strong>#}
     </div>
-
-
+{% if user.is_authenticated %}
     <div id="chartLimiter" class="chart--wrapper">
         <!-- CHART CONTAINER -->
         <div id="myChart">
             <a class="zc-ref" href="https://www.zingchart.com">Powered by ZingChart</a>
         </div>
+        <input class="text" id="success-count" type="hidden" value="{{ success_count }}">
+        <input class="text" id="pending-count" type="hidden" value="{{ pending_count }}">
+    <input class="text" id="fail-count" type="hidden" value="{{ fail_count }}">
+    <input class="text" id="warning-count" type="hidden" value="{{ warning_count }}">
     </div>
 
+<br/><br/><br/>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-6">
+                <div class="card-body" id="submission-card">
+                    <h2>Recent Submissions</h2>
+                    <p class="card-text">
+                    {% if submissions %}
+                    <ul class="list-group">
+                    {% for submission in submissions %}
+{#                        <li class="list-group-item"><a href="{% url 'rango:show_category' category.slug %}">{{ category.name }}</a></li>#}
+                        <li class="list-group-item"><a>ID {{ submission.id }}: {{ submission.title }}</a></li>
+                    {% endfor %}
+                    </ul>
+                    {% else %}
+                    <strong>You have not submitted anything recently.</strong>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
 
-    <div>
-        <h2>Recent Submissions</h2>
-        {% if categories %}
-            <ul>
-                {% for category in categories %}
-                    <li><a href="{% url 'rango:show_category' category.slug %}">{{ category.name }}</a></li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <strong>You have not submitted anything recently.</strong>
-        {% endif %}
+        <div class="col-md-6">
+            <div class="card mb-6">
+                <div class="card-body" id="feedback-card">
+                    <h2>Recent Feedback</h2>
+                    <p class="card-text">
+                    {% if feedbacks %}
+                    <ul class="list-group">
+                    {% for feedback in feedbacks %}
+{#                        <li class="list-group-item"><a href="{{ page.url }}">{{ page.title }}</a></li>#}
+                        <li class="list-group-item"><a>Feedback for submission ID {{ feedback.referring_submission.id }}</a></li>
+                    {% endfor %}
+                    </ul>
+                    {% else %}
+                    <strong>You have not received any feedback recently.</strong>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
+</div>
+    {% endif %}
 
-    <div>
-        <h2>Recent Feedbacks</h2>
-        {% if pages %}
-            <ul>
-                {% for page in pages %}
-                    <li><a href="{{ page.url }}">{{ page.title }}</a></li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <strong>You have no feedback recently.</strong>
-        {% endif %}
-    </div>
-
-
-
-    <div>
-        <img src="{% static 'images/rango.jpg' %}" alt="Picture of Rango"/>
-    </div>
 {% endblock %}
