@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-# import Category model
+from django.contrib import messages
 from rango.models import Category
 from rango.models import Page
 from rango.models import Submission
@@ -10,7 +10,10 @@ from django.shortcuts import redirect
 from rango.forms import PageForm
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import user_passes_test
 from datetime import datetime
+from rango.forms import SubmissionForm
+from django.core.paginator import Paginator
 
 def index(request):
     # Construct a dictionary to pass to the template engine as its context.
@@ -50,6 +53,7 @@ def index(request):
     # request.session.set_test_cookie()
     # return render(request, 'rango/index.html', context=context_dict)
 
+
 def about(request):
     # Context dict is not needed here!
     # print(request.method)
@@ -65,6 +69,7 @@ def about(request):
 
     response = render(request, 'rango/contact.html', context=context_dict)
     return response
+
 
 def show_category(request, category_name_slug):
     # Create a context dictionary which we can pass to the template rendering engine.
@@ -87,6 +92,7 @@ def show_category(request, category_name_slug):
 
     return render(request, 'rango/category.html', context=context_dict)
 
+
 @login_required
 def add_category(request):
     form = CategoryForm()
@@ -102,7 +108,8 @@ def add_category(request):
             print(form.errors)
 
     return render(request, 'rango/add_category.html', {'form': form})
-    
+
+
 @login_required
 def add_page(request, category_name_slug):
     try:
@@ -132,6 +139,7 @@ def add_page(request, category_name_slug):
 
     context_dict = {'form': form, 'category': category}
     return render(request, 'rango/add_page.html', context=context_dict)
+
 
 # Decommissioned
 # def register(request):
@@ -187,6 +195,7 @@ def add_page(request, category_name_slug):
 def restricted(request):
     return render(request, 'rango/restricted.html')
 
+
 # Decommissioned
 # @login_required
 # def user_logout(request):
@@ -201,7 +210,8 @@ def get_server_side_cookie(request, cookie, default_val=None):
         val = default_val
     return val
 
-# Update this fn 
+
+# Update this fn
 def visitor_cookie_handler(request):
     # use 1 instead if the cookie is not exist - new user
     visits = int(get_server_side_cookie(request, 'visits', '1'))
@@ -219,3 +229,86 @@ def visitor_cookie_handler(request):
         request.session['last_visit'] = last_visit_cookie
 
     request.session['visits'] = visits
+
+
+@user_passes_test(lambda u: u.is_active and u.is_superuser)
+def usimuAdmin(request):
+    domain = request.META['HTTP_HOST']
+    context_dict = {}
+    context_dict['domain'] = domain
+    return render(request, 'rango/usimu_admin.html', context=context_dict)
+
+
+@login_required
+def submission(request):
+    context_dict = {}
+    user = request.user
+    submissions = Submission.objects.filter(owner_id=user.id).order_by('-id')
+
+    context_dict['current_user'] = user
+
+    # paginator
+    paginator = Paginator(submissions, 5) # every 5 items a page
+    page_num = request.GET.get('page', default=1) # invalid number set to 1
+    curr_page_content = paginator.get_page(page_num) # container for current page
+
+
+    page_list = [x for x in range(curr_page_content.number - 2, curr_page_content.number + 3) if x in paginator.page_range]
+    # print(page_list)
+    # adding "..."
+    if page_list[0] - 1 >= 2:
+        page_list.insert(0, "...")
+    if paginator.num_pages - page_list[-1]  >= 2:
+        page_list.append("...")
+    # print(page_list)
+    # adding first/last page
+    if page_list[0] == "...":
+        page_list.insert(0, 1)# first page
+    if page_list[-1] != paginator.num_pages:
+        page_list.append(paginator.num_pages)# very last page
+    print(page_list)
+
+    context_dict['submissions'] = curr_page_content
+    context_dict['page_list'] = page_list
+
+    return render(request, 'rango/submissions.html', context=context_dict)
+
+
+@login_required
+def upload_code(request):
+    context_dict = {}
+    submission_form = None
+
+    try:
+        # getting user/their submission/their feedback
+        user = request.user
+        # add the result
+        context_dict['current_user'] = user
+        # to POST a submission
+        new_submission = None
+        submission_form = SubmissionForm()
+        if request.method == 'POST':
+            submission_form = SubmissionForm(request.POST)
+
+            if submission_form.is_valid():
+                # do not commit yet, something to add
+                new_submission = submission_form.save(commit=False)
+                # assign current owner
+                new_submission.owner = request.user
+                new_submission.save()
+                messages.success(request, "Successfully Submitted!")
+                return redirect('rango:submissions')
+
+            else:
+                print(submission_form.errors)
+                new_submission = SubmissionForm()
+
+        context_dict['new_submission'] = new_submission
+
+
+    except Submission.DoesNotExist:
+        # specified submission not found
+        context_dict['submissions'] = None
+
+    context_dict['submission_form'] = submission_form
+    return render(request, 'rango/upload_code.html', context=context_dict)

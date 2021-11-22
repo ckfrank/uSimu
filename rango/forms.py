@@ -2,6 +2,8 @@ from django.contrib.auth.models import User
 from django import forms
 from rango.models import Page, Category
 from rango.models import UserProfile
+from rango.models import Submission
+
 
 class CategoryForm(forms.ModelForm):
     name = forms.CharField(
@@ -16,6 +18,7 @@ class CategoryForm(forms.ModelForm):
         model = Category
         fields = ('name',)
 
+
 class PageForm(forms.ModelForm):
     title = forms.CharField(
         max_length=Page.TITLE_MAX_LEN, help_text="Please enter the title of the page.")
@@ -25,7 +28,7 @@ class PageForm(forms.ModelForm):
 
     class Meta:
         model = Page
-         # define what keys to include  with fields, or define what we do not want via exclude
+        # define what keys to include  with fields, or define what we do not want via exclude
         exclude = ('category',)
 
     def clean(self):
@@ -46,7 +49,19 @@ class UserForm(forms.ModelForm):
         model = User
         fields = ('username', 'email', 'password',)
 
+
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ('website', 'picture',) 
+        fields = ('website', 'picture',)
+
+
+# form for accepting submitted code
+class SubmissionForm(forms.ModelForm):
+    title = forms.CharField(widget=forms.Textarea(attrs={'rows': 1, 'cols': 130, 'class': 'form-control'}), label='Title')
+    content = forms.CharField(widget=forms.Textarea(attrs={'rows': 20, 'cols': 130, 'class': 'form-control'}), label='Paste your code here')
+    result = forms.CharField(widget=forms.HiddenInput(), initial="Pending")
+
+    class Meta:
+        model = Submission
+        fields = ('title', 'content', 'result')

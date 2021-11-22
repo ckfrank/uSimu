@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 {% load staticfiles %}
-{% load rango_template_tags %}
+{% load usim_template_tags %}
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -14,6 +14,7 @@
     </title>
 
     <!-- Bootstrap core CSS -->
+{#<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">#}
     <link href="https://getbootstrap.com/docs/4.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
@@ -39,10 +40,14 @@
 
 
                 {% if user.is_authenticated %}
-                    <li class="nav-item "><a class="nav-link" href="{% url 'rango:restricted' %}">Restricted</a></li>
+                    {#                    <li class="nav-item "><a class="nav-link" href="{% url 'rango:restricted' %}">Restricted</a></li>#}
 
-                    {#                    <li class="nav-item"><a class="nav-link" href="{% url 'rango:add_category' %}">Add Category</a></li>#}
-
+                    <li class="nav-item"><a class="nav-link" href="{% url 'rango:submissions' %}">Submission</a></li>
+                    {#                    {% submission_dropdown %}#}
+                    {% if user.is_superuser %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'rango:usimuAdmin' %}">uSimu Admin</a>
+                        </li>
+                    {% endif %}
 
                 {% endif %}
                 <li class="nav-item"><a class="nav-link" href="{% url 'rango:contact' %}">Contact Instructor</a></li>
@@ -52,7 +57,8 @@
                 {% if user.is_authenticated %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'auth_password_change' %}">Change Password</a>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'auth_logout' %}?next=/usimu/">Logout</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'auth_logout' %}?next=/usimu/">Logout
+                        | {{ user.username }}</a></li>
                 {% else %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'registration_register' %}">Register Here</a>
                     </li>
@@ -108,8 +114,7 @@
 
 <!-- Bootstrap core JavaScript -->
 <!-- Placed at the end of the document so the pages load faster -->
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
         crossorigin="anonymous"></script>
 <script>window.jQuery || document.write('<script src="https://getbootstrap.com/docs/4.2/assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
 <script src="https://getbootstrap.com/docs/4.2/dist/js/bootstrap.bundle.min.js"
@@ -120,5 +125,6 @@
 <!-- zingchart related scripts -->
 <script src="{% static 'js/zingchart.min.js' %}"></script>
 <script src="{% static 'js/chart.js' %}"></script>
+<script src="{% static 'js/alert-success.js' %}"></script>
 </body>
 </html>

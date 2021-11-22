@@ -1,0 +1,90 @@
+{% extends 'rango/base.html' %}
+{% load staticfiles %}
+
+
+{% block title_block %}
+    Submissions
+{% endblock %}
+
+{% block body_block %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}" role="alert">{{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    <h1>Submissions</h1>
+
+    <hr class="featurette-divider"><br/>
+    <div style="text-align: center"><a id="add-code-btn" href="{% url 'rango:uploadCode' %}"
+                                       class="btn btn-info btn">Add Submission Here</a></div>
+
+
+    <br><br><br>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mb-12">
+                    <div class="card-body" id="submission-card">
+                        <h5>Recent Submissions</h5>
+                        <p class="card-text">
+                            {% if submissions %}
+                                <ul class="list-group">
+                                    {% for submission in submissions %}
+                                        <li class="list-group-item">
+                                            <a>ID {{ submission.id }}: {{ submission.title }}</a>
+                                            <a style="float: right">{{ submission.date }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <strong>You have not submitted anything recently.</strong>
+                            {% endif %}
+                    </div>
+                    <div class="paginator">
+
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item">
+                                {% if page_list.has_previous %}
+                                    <a class="page-link" href="?page={{ page_list }}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                {% else %}
+                                    <span aria-hidden="true"><a class="page-link">&laquo;</a></span>
+                                {% endif %}
+                            </li>
+                            {% for page_list in page_list %}
+                                {% if page_list == submissions.number %} {# highlight current page #}
+                                    <li class="page-item active" aria-current="page"><span><a
+                                            class="page-link">{{ page_list }}</a></span></li>
+                                {% else %}
+                                    {% if page_list == "..." %}
+                                        <li class="page-item"><span><a class="page-link">{{ page_list }}</a></span></li>
+                                    {% else %}
+                                        <li class="page-item"><a class="page-link"
+                                                                 href="?page={{ page_list }}">{{ page_list }}</a></li>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                            <li class="page-item">
+
+                                {% if page_list.has_next %}
+                                    <a class="page-link" href="#" aria-label="Next"></a>
+                                {% else %}
+                                    <span aria-hidden="true"><a class="page-link">&raquo;</a></span>
+                                {% endif %}
+
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+

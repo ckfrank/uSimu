@@ -86,7 +86,10 @@ class Submission(models.Model):
         ordering = ['date']
 
     def __str__(self):
-        return self.id
+        return self.title
+
+    def save(self, *args, **kwargs):
+        super(Submission, self).save()
 
 
 class Feedback(models.Model):
@@ -99,4 +102,7 @@ class Feedback(models.Model):
         ordering = ['date']
 
     def __str__(self):
-        return self.id
+        return 'Feedback for submission {} from {}'.format(self.referring_submission_id, self.owner)
+
+    def save(self, *args, **kwargs):
+        super(Feedback, self).save()

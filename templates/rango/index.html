@@ -10,68 +10,74 @@
 
     <div>
         {% if user.is_authenticated %}
-            <strong>Welcome, {{ user.username }}!</strong>
+            {% if user.is_superuser %}
+                <strong>Welcome, {{ user.username }}! You are using an ADMIN account!</strong>
+            {% else %}
+                <strong>Welcome, {{ user.username }}!</strong>
+            {% endif %}
         {% else %}
             <h2><strong>Please log in to continue</strong></h2>
         {% endif %}
-    <hr class="featurette-divider">
+        <hr class="featurette-divider">
         <br/>
         {#            <strong>{{ boldmessage }}</strong>#}
     </div>
-{% if user.is_authenticated %}
-    <div id="chartLimiter" class="chart--wrapper">
-        <!-- CHART CONTAINER -->
-        <div id="myChart">
-            <a class="zc-ref" href="https://www.zingchart.com">Powered by ZingChart</a>
+    {% if user.is_authenticated %}
+        <div id="chartLimiter" class="chart--wrapper">
+            <!-- CHART CONTAINER -->
+            <div id="myChart">
+                <a class="zc-ref" href="https://www.zingchart.com">Powered by ZingChart</a>
+            </div>
+            <input class="text" id="success-count" type="hidden" value="{{ success_count }}" readonly="readonly">
+            <input class="text" id="pending-count" type="hidden" value="{{ pending_count }}" readonly="readonly">
+            <input class="text" id="fail-count" type="hidden" value="{{ fail_count }}" readonly="readonly">
+            <input class="text" id="warning-count" type="hidden" value="{{ warning_count }}" readonly="readonly">
         </div>
-        <input class="text" id="success-count" type="hidden" value="{{ success_count }}">
-        <input class="text" id="pending-count" type="hidden" value="{{ pending_count }}">
-    <input class="text" id="fail-count" type="hidden" value="{{ fail_count }}">
-    <input class="text" id="warning-count" type="hidden" value="{{ warning_count }}">
-    </div>
 
-<br/><br/><br/>
-<div class="container">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card mb-6">
-                <div class="card-body" id="submission-card">
-                    <h2>Recent Submissions</h2>
-                    <p class="card-text">
-                    {% if submissions %}
-                    <ul class="list-group">
-                    {% for submission in submissions %}
-{#                        <li class="list-group-item"><a href="{% url 'rango:show_category' category.slug %}">{{ category.name }}</a></li>#}
-                        <li class="list-group-item"><a>ID {{ submission.id }}: {{ submission.title }}</a></li>
-                    {% endfor %}
-                    </ul>
-                    {% else %}
-                    <strong>You have not submitted anything recently.</strong>
-                    {% endif %}
+        <br/><br/><br/>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-6">
+                        <div class="card-body" id="submission-card">
+                            <h2>Recent Submissions</h2>
+                            <p class="card-text">
+                                {% if submissions %}
+                                    <ul class="list-group">
+                                        {% for submission in submissions %}
+                                            {#                        <li class="list-group-item"><a href="{% url 'rango:show_category' category.slug %}">{{ category.name }}</a></li>#}
+                                            <li class="list-group-item">
+                                                <a>ID {{ submission.id }}: {{ submission.title }}</a><a style="float: right">{{ submission.date }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <strong>You have not submitted anything recently.</strong>
+                                {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card mb-6">
+                        <div class="card-body" id="feedback-card">
+                            <h2>Recent Feedback</h2>
+                            <p class="card-text">
+                                {% if feedbacks %}
+                                    <ul class="list-group">
+                                        {% for feedback in feedbacks %}
+                                            {#                        <li class="list-group-item"><a href="{{ page.url }}">{{ page.title }}</a></li>#}
+                                            <li class="list-group-item"><a>Feedback for submission
+                                                ID {{ feedback.referring_submission.id }}</a><a style="float: right">{{ feedback.date }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <strong>You have not received any feedback recently.</strong>
+                                {% endif %}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <div class="col-md-6">
-            <div class="card mb-6">
-                <div class="card-body" id="feedback-card">
-                    <h2>Recent Feedback</h2>
-                    <p class="card-text">
-                    {% if feedbacks %}
-                    <ul class="list-group">
-                    {% for feedback in feedbacks %}
-{#                        <li class="list-group-item"><a href="{{ page.url }}">{{ page.title }}</a></li>#}
-                        <li class="list-group-item"><a>Feedback for submission ID {{ feedback.referring_submission.id }}</a></li>
-                    {% endfor %}
-                    </ul>
-                    {% else %}
-                    <strong>You have not received any feedback recently.</strong>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
     {% endif %}
 
 {% endblock %}

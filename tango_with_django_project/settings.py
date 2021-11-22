@@ -133,3 +133,6 @@ ACCOUNT_ACTIVATION_DAYS = 7
 REGISTRATION_AUTO_LOGIN = True  # after registration, auto login
 LOGIN_REDIRECT_URL = 'rango:index'
 LOGIN_URL = 'auth_login'  # the required logged in URL
+
+# Settings for cross page messaging:
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
