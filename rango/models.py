@@ -79,6 +79,8 @@ class Submission(models.Model):
     title = models.CharField(max_length=128)
     content = models.TextField(blank=False)
     result = models.TextField(blank=False)
+    result_detail = models.TextField(blank=True)
+    cpu = models.ForeignKey(CPU, on_delete=models.CASCADE, related_name='submission_cpu')
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='submission_owner')
 
     # feedback = models.ForeignKey(Feedback, on_delete=models.CASCADE, related_name='submission_feedback')

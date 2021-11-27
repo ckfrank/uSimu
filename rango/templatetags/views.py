@@ -8,12 +8,13 @@ from rango.models import Feedback
 from rango.forms import CategoryForm
 from django.shortcuts import redirect
 from rango.forms import PageForm
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 from datetime import datetime
 from rango.forms import SubmissionForm
 from django.core.paginator import Paginator
+from rango.models import CPU_Family, CPU
 
 def index(request):
     # Construct a dictionary to pass to the template engine as its context.
@@ -285,16 +286,21 @@ def upload_code(request):
         # add the result
         context_dict['current_user'] = user
         # to POST a submission
+        cpu_url = reverse_lazy("rango:ajax_load_cpus")
         new_submission = None
         submission_form = SubmissionForm()
         if request.method == 'POST':
             submission_form = SubmissionForm(request.POST)
+            # print(request.POST)
 
             if submission_form.is_valid():
                 # do not commit yet, something to add
                 new_submission = submission_form.save(commit=False)
                 # assign current owner
                 new_submission.owner = request.user
+                cpu = CPU.objects.get(id=int(request.POST.get("cpu")))
+                new_submission.cpu = cpu
+                # print(request)
                 new_submission.save()
                 messages.success(request, "Successfully Submitted!")
                 return redirect('rango:submissions')
@@ -306,9 +312,28 @@ def upload_code(request):
         context_dict['new_submission'] = new_submission
 
 
+
     except Submission.DoesNotExist:
         # specified submission not found
         context_dict['submissions'] = None
 
     context_dict['submission_form'] = submission_form
+    context_dict['cpu_url'] = cpu_url
     return render(request, 'rango/upload_code.html', context=context_dict)
+
+@login_required
+def submission_detail(request, submission_id):
+    context_dict ={}
+    submission = Submission.objects.get(id=int(submission_id))
+    title = str(submission.title)
+
+    context_dict['title'] = title
+    return render(request, 'rango/submission_detail.html', context=context_dict)
+
+def load_cpu(request):
+    context_dict = {}
+    family_id = request.GET.get('cpu_family')
+    family = CPU_Family.objects.get(pk=family_id)
+    cpus = CPU.objects.filter(family=family).order_by('name')
+    context_dict['cpus'] = cpus
+    return render(request, template_name='rango/load_cpus.html',context=context_dict)

@@ -8,10 +8,11 @@
 {% block body_block %}
 
 <h3>Upload a new submission</h3>
-    <form method="post">
+    <form method="post" id="id-code-submission" cpu_data_url= {{ cpu_url }}>
     {{ submission_form.as_p }}
     {% csrf_token %}
     <button type="submit" class="btn btn-primary btn-lg">Submit</button>
     </form>
 
 {% endblock %}
+

@@ -10,7 +10,9 @@ urlpatterns = [
     path('contact/', views.about, name='contact'),
     path('usimu-admin/', views.usimuAdmin, name='usimuAdmin'),
     path('submissions/', views.submission, name='submissions'),
-    path('submissions/upload-code', views.upload_code, name='uploadCode')
+    path('submissions/upload-code/', views.upload_code, name='uploadCode'),
+    path('submissions/<int:submission_id>/', views.submission_detail, name='submission_detail'),
+    path('ajax/load-cpus/', views.load_cpu, name='ajax_load_cpus'),
     # path('django-admin/', admin.site.urls, name='djangoAdmin'),
     # path('category/<slug:category_name_slug>/',
     #      views.show_category, name='show_category'),

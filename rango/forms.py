@@ -1,8 +1,11 @@
 from django.contrib.auth.models import User
 from django import forms
+from django.urls import reverse_lazy
+
 from rango.models import Page, Category
 from rango.models import UserProfile
 from rango.models import Submission
+from rango.models import CPU, CPU_Family
 
 
 class CategoryForm(forms.ModelForm):
@@ -60,6 +63,8 @@ class UserProfileForm(forms.ModelForm):
 class SubmissionForm(forms.ModelForm):
     title = forms.CharField(widget=forms.Textarea(attrs={'rows': 1, 'cols': 130, 'class': 'form-control'}), label='Title')
     content = forms.CharField(widget=forms.Textarea(attrs={'rows': 20, 'cols': 130, 'class': 'form-control'}), label='Paste your code here')
+    cpu_family = forms.ModelChoiceField(queryset=CPU_Family.objects.all(), empty_label="---Please Select---", label="CPU Family")
+    cpu = forms.ModelChoiceField(queryset=CPU.objects.all(), label="CPU")
     result = forms.CharField(widget=forms.HiddenInput(), initial="Pending")
 
     class Meta:

@@ -1,0 +1,4 @@
+{#<option value="">-------</option>#}
+{% for cpu  in cpus %}
+<option value="{{cpu.pk}}">{{cpu.name}}</option>
+{% endfor %}

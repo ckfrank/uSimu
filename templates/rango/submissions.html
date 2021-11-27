@@ -29,13 +29,15 @@
             <div class="col-md-12">
                 <div class="card mb-12">
                     <div class="card-body" id="submission-card">
-                        <h5>Recent Submissions</h5>
+                        <h5>Your Submissions</h5>
                         <p class="card-text">
                             {% if submissions %}
                                 <ul class="list-group">
                                     {% for submission in submissions %}
                                         <li class="list-group-item">
                                             <a>ID {{ submission.id }}: {{ submission.title }}</a>
+                                            <a style="float: right">CPU: {{ submission.cpu }}</a>
+                                            <br/>
                                             <a style="float: right">{{ submission.date }}</a></li>
                                     {% endfor %}
                                 </ul>
@@ -86,5 +88,7 @@
 
 
 {% endblock %}
+
+
 
 
