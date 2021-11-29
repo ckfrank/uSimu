@@ -9,7 +9,57 @@
 
 
 {% block body_block %}
-        <h1>Submission Detail: {{ title }}</h1>
+    <h1>Submission Detail: {{ title }}</h1>
+    <hr class="featurette-divider"><br/>
+    <input class="text" id="submission" type="hidden" value="{{ submission }}" readonly="readonly">
+
+    <div class="select2-container">
+        <h6>CPU Family: {{ family }} <br/> CPU: {{ cpu }}</h6>
+        <h6>Submission Status:
+            {% if result == "Success" %}
+                <a style="color: #6FB07F">{{ result }}</a>
+            {% elif result == "Warning" %}
+                <a style="color: #e8ab01">{{ result }}</a>
+            {% elif result == "Fail" %}
+                <a style="color: #FF7965">{{ result }}</a>
+            {% elif result == "Pending" %}
+                <a style="color: #747485">{{ result }}</a>
+            {% endif %} </h6>
+
+    </div><br/><br/>
+
+
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-6 border-0">
+                    <div class="card-body" id="code-card">
+                        <h6>Code</h6>
+                        <p class="card-text">
+                            {% for content in content_lines %}
+                                <pre style="line-height: 1em; font-size: 100%" class="pre-code"><a href="#"
+                                                                 value="{{ forloop.counter }}" class="id-code-line">{{ content }}</a></pre>
+                            {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card mb-6 border-0">
+                    <div class="card-body"  id="result-card" result-data-url="{{ result_url }}">
+                        <h6>Simulation Result</h6>
+                        <p class="card-text">
+                            <div id="result-text"><pre>Please click on the code to see Memory and Register status</pre></div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
 {% endblock %}
 

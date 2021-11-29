@@ -2,6 +2,7 @@ import datetime
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
+from rango.psudo_processor import randomStatus
 
 
 class Category(models.Model):
@@ -91,6 +92,8 @@ class Submission(models.Model):
         return self.title
 
     def save(self, *args, **kwargs):
+        if not self.pk: # this will only happen on creation, when there is no primary key
+            self.result = randomStatus() # psudo-assigning results, faking the run of the simulator
         super(Submission, self).save()
 
 

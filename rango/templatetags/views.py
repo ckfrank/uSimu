@@ -15,6 +15,8 @@ from datetime import datetime
 from rango.forms import SubmissionForm
 from django.core.paginator import Paginator
 from rango.models import CPU_Family, CPU
+from collections import OrderedDict
+import json
 
 def index(request):
     # Construct a dictionary to pass to the template engine as its context.
@@ -249,7 +251,7 @@ def submission(request):
     context_dict['current_user'] = user
 
     # paginator
-    paginator = Paginator(submissions, 5) # every 5 items a page
+    paginator = Paginator(submissions, 10) # every 5 items a page
     page_num = request.GET.get('page', default=1) # invalid number set to 1
     curr_page_content = paginator.get_page(page_num) # container for current page
 
@@ -267,7 +269,7 @@ def submission(request):
         page_list.insert(0, 1)# first page
     if page_list[-1] != paginator.num_pages:
         page_list.append(paginator.num_pages)# very last page
-    print(page_list)
+    # print(page_list)
 
     context_dict['submissions'] = curr_page_content
     context_dict['page_list'] = page_list
@@ -310,25 +312,37 @@ def upload_code(request):
                 new_submission = SubmissionForm()
 
         context_dict['new_submission'] = new_submission
-
-
+        context_dict['cpu_url'] = cpu_url
 
     except Submission.DoesNotExist:
         # specified submission not found
         context_dict['submissions'] = None
 
     context_dict['submission_form'] = submission_form
-    context_dict['cpu_url'] = cpu_url
     return render(request, 'rango/upload_code.html', context=context_dict)
 
 @login_required
 def submission_detail(request, submission_id):
     context_dict ={}
+    result_url = reverse_lazy("rango:ajax_load_results")
     submission = Submission.objects.get(id=int(submission_id))
     title = str(submission.title)
+    cpu = submission.cpu
+    family = cpu.family
+    result = submission.result
+    content = submission.content
 
     context_dict['title'] = title
+    context_dict['cpu'] = cpu
+    context_dict['family'] = family
+    context_dict['result'] = result
+    context_dict['content_lines'] = listify_assembly(content)
+    context_dict['result_url'] = result_url
+    context_dict['submission'] = submission.id
+    # format_assembly(content)
+
     return render(request, 'rango/submission_detail.html', context=context_dict)
+
 
 def load_cpu(request):
     context_dict = {}
@@ -336,4 +350,54 @@ def load_cpu(request):
     family = CPU_Family.objects.get(pk=family_id)
     cpus = CPU.objects.filter(family=family).order_by('name')
     context_dict['cpus'] = cpus
-    return render(request, template_name='rango/load_cpus.html',context=context_dict)
+    return render(request, template_name='rango/load_cpus.html', context=context_dict)
+
+
+def listify_assembly(code):
+    result = []
+    for line in code.splitlines():
+        result.append(line)
+
+    return result
+
+
+def load_result(request):
+    context_dict = {}
+    line_number = request.GET.get('line_number')
+    submission_id = request.GET.get('submission')
+    submission_obj = Submission.objects.get(pk=submission_id)
+    line_result = "this is result line " + line_number
+
+    if int(request.user.id) != int(submission_obj.owner.id):
+        line_result = "Warning, unauthorized access of othet's result"
+        context_dict['result'] = line_result
+        return render(request, template_name='rango/load_submission_results.html', context=context_dict)
+
+    raw_result = submission_obj.result_detail
+    result = json.loads(raw_result)
+    memory_used = result['memory']
+    mem_output = OrderedDict()
+    reg_output = OrderedDict()
+
+    for loc in memory_used:
+        for line in range(1, int(line_number) + 1):
+            # print(result['data_memory'][str(line)].keys())
+            if str(loc) in result['data_memory'][str(line)].keys():
+                mem_output[loc] = result['data_memory'][str(line)][loc]
+
+
+    register_content = result['register']
+    # register must store all the registers, does not care if it changes
+    for line in range(1, int(line_number) + 1):
+        for key in register_content[str(line)].keys():
+            reg_output[key] = register_content[str(line)][key]
+
+
+    context_dict['memory'] = mem_output
+    context_dict['register'] = reg_output
+    context_dict['result'] = line_result
+    return render(request, template_name='rango/load_submission_results.html', context=context_dict)
+
+
+
+

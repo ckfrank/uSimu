@@ -9,7 +9,7 @@ $(document).ready(function () {
             url: url,
             data: {'cpu_family': familyId},
             success: function (data) {
-                console.log(url)
+                // console.log(url)
                 $("#id_cpu").html(data);
             }
         });

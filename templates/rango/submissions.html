@@ -35,10 +35,19 @@
                                 <ul class="list-group">
                                     {% for submission in submissions %}
                                         <li class="list-group-item">
-                                            <a>ID {{ submission.id }}: {{ submission.title }}</a>
+                                            <a href="{% url 'rango:submission_detail' submission.id %}">ID {{ submission.id }}: {{ submission.title }}</a>
                                             <a style="float: right">CPU: {{ submission.cpu }}</a>
                                             <br/>
-                                            <a style="float: right">{{ submission.date }}</a></li>
+                                            {% if submission.result == "Success" %}
+                                                <a style="float: right; color: #6FB07F">{{ submission.result }}</a>
+                                            {% elif submission.result == "Warning" %}
+                                                <a style="float: right; color: #e8ab01">{{ submission.result }}</a>
+                                            {% elif submission.result == "Fail" %}
+                                                <a style="float: right; color: #FF7965">{{ submission.result }}</a>
+                                            {% elif submission.result == "Pending" %}
+                                                <a style="float: right; color: #747485">{{ submission.result }}</a>
+                                            {% endif %}
+                                            <a style="float: left">{{ submission.date }}</a></li>
                                     {% endfor %}
                                 </ul>
                             {% else %}

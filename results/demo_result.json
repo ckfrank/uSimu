@@ -1,0 +1,111 @@
+{
+  "_comment": "This data shows the result after a CPU simulation",
+  "content": "Simulation result",
+  "status": "Success",
+  "memory": [
+    "0100",
+    "0103",
+    "0105",
+    "0108",
+    "0109",
+    "010C",
+    "0110",
+    "0111"
+  ],
+  "data_memory": {
+    "1": {
+      "0100": "B6",
+      "0103": "00",
+      "0105": "B7",
+      "0108": "3F",
+      "0109": "F9",
+      "010C": "00",
+      "0110": "0A",
+      "0111": "8A"
+    },
+    "2": {
+      "0105": "8F",
+      "010C": "BB",
+      "0111": "0C"
+    },
+    "3": {
+      "0103": "02",
+      "010C": "A9",
+      "0100": "B3"
+    },
+    "4": {
+      "0108": "33",
+      "0109": "77",
+      "010C": "AF",
+      "0111": "9C"
+    },
+    "5": {
+      "0103": "00",
+      "0108": "08",
+      "0109": "F7",
+      "010C": "72",
+      "0110": "88"
+    },
+    "6": {
+      "0105": "B4",
+      "0108": "F0",
+      "0109": "32",
+      "010C": "08"
+    },
+    "7": {
+      "0110": "00",
+      "0111": "00"
+    }
+  },
+  "register": {
+    "1": {
+      "accumulator_a": "00",
+      "accumulator_b": "A0",
+      "index_register": "0100",
+      "stack_pointer": "0103",
+      "status_register": "C,V"
+    },
+    "2": {
+      "accumulator_a": "B7",
+      "accumulator_b": "A0",
+      "index_register": "0103",
+      "stack_pointer": "0109",
+      "status_register": ""
+    },
+    "3": {
+      "accumulator_a": "AA",
+      "accumulator_b": "80",
+      "index_register": "0105",
+      "stack_pointer": "0108",
+      "status_register": "N"
+    },
+    "4": {
+      "accumulator_a": "C8",
+      "accumulator_b": "80",
+      "index_register": "0108",
+      "stack_pointer": "0108",
+      "status_register": ""
+    },
+    "5": {
+      "accumulator_a": "AF",
+      "accumulator_b": "A9",
+      "index_register": "0109",
+      "stack_pointer": "0108",
+      "status_register": "H"
+    },
+    "6": {
+      "accumulator_a": "C3",
+      "accumulator_b": "A5",
+      "index_register": "010C",
+      "stack_pointer": "010C",
+      "status_register": ""
+    },
+    "7": {
+      "accumulator_a": "5C",
+      "accumulator_b": "60",
+      "index_register": "0100",
+      "stack_pointer": "0105",
+      "status_register": "V"
+    }
+  }
+}

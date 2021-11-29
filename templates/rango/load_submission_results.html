@@ -1,0 +1,18 @@
+{#<a>{{ result }}</a>#}
+
+{#NOTE: DO NOT change the formatting in side the pre tag !!#}
+<pre style="color: #e54141">Demo result, the result does not reflect to what the code changes!</pre>
+
+<pre id="left-column" style="float:left; width: 50%; font-size: 100%">
+    Memory Status:
+    {% for key, value in memory.items %}
+    {{ key }} : {{ value }}
+    {% endfor %}
+    </pre>
+
+<pre id="right-column" style="float:right; width: 50%; font-size: 100%">
+    Register Status:
+    {% for key, value in register.items %}
+    {{ key }} : {{ value }}
+    {% endfor %}
+    </pre>

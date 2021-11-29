@@ -47,7 +47,20 @@
                                         {% for submission in submissions %}
                                             {#                        <li class="list-group-item"><a href="{% url 'rango:show_category' category.slug %}">{{ category.name }}</a></li>#}
                                             <li class="list-group-item">
-                                                <a>ID {{ submission.id }}: {{ submission.title }}</a><a style="float: right">{{ submission.date }}</a></li>
+                                                <a href="{% url 'rango:submission_detail' submission.id %}">ID {{ submission.id }}: {{ submission.title }}</a><a
+                                                    style="float: right">{{ submission.date }}</a>
+                                                <br/>
+                                                {% if submission.result == "Success" %}
+                                                    <a style="color: #6FB07F">{{ submission.result }}</a>
+                                                {% elif submission.result == "Warning" %}
+                                                    <a style="color: #e8ab01">{{ submission.result }}</a>
+                                                {% elif submission.result == "Fail" %}
+                                                    <a style="color: #FF7965">{{ submission.result }}</a>
+                                                {% elif submission.result == "Pending" %}
+                                                    <a style="color: #747485">{{ submission.result }}</a>
+                                                {% endif %}
+                                            </li>
+
                                         {% endfor %}
                                     </ul>
                                 {% else %}
@@ -63,11 +76,12 @@
                             <h2>Recent Feedback</h2>
                             <p class="card-text">
                                 {% if feedbacks %}
-                                    <ul class="list-group">
+
                                         {% for feedback in feedbacks %}
                                             {#                        <li class="list-group-item"><a href="{{ page.url }}">{{ page.title }}</a></li>#}
-                                            <li class="list-group-item"><a>Feedback for submission
-                                                ID {{ feedback.referring_submission.id }}</a><a style="float: right">{{ feedback.date }}</a></li>
+                                            <li class="list-group-item"><a href="{% url 'rango:submission_detail' feedback.referring_submission.id %}">Feedback for submission
+                                                 {{ feedback.referring_submission.id }}</a><a
+                                                    style="float: right">{{ feedback.date }}</a></li>
                                         {% endfor %}
                                     </ul>
                                 {% else %}

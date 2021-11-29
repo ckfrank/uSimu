@@ -13,6 +13,7 @@ urlpatterns = [
     path('submissions/upload-code/', views.upload_code, name='uploadCode'),
     path('submissions/<int:submission_id>/', views.submission_detail, name='submission_detail'),
     path('ajax/load-cpus/', views.load_cpu, name='ajax_load_cpus'),
+    path('ajax/load-simulation-results/', views.load_result, name='ajax_load_results')
     # path('django-admin/', admin.site.urls, name='djangoAdmin'),
     # path('category/<slug:category_name_slug>/',
     #      views.show_category, name='show_category'),
