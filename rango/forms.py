@@ -6,6 +6,7 @@ from rango.models import Page, Category
 from rango.models import UserProfile
 from rango.models import Submission
 from rango.models import CPU, CPU_Family
+from rango.models import Feedback
 
 
 class CategoryForm(forms.ModelForm):
@@ -70,3 +71,12 @@ class SubmissionForm(forms.ModelForm):
     class Meta:
         model = Submission
         fields = ('title', 'content', 'result')
+
+
+# for instructor to write a feedback
+class FeedbackForm(forms.ModelForm):
+    content = forms.CharField(widget=forms.Textarea(attrs={'rows': 5, 'cols': 130, 'class': 'form-control'}), label='')
+
+    class Meta:
+        model = Feedback
+        fields = ('content',)

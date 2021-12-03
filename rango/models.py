@@ -3,6 +3,7 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
 from rango.psudo_processor import randomStatus
+from rango.psudo_processor import demoResult
 
 
 class Category(models.Model):
@@ -94,6 +95,7 @@ class Submission(models.Model):
     def save(self, *args, **kwargs):
         if not self.pk: # this will only happen on creation, when there is no primary key
             self.result = randomStatus() # psudo-assigning results, faking the run of the simulator
+            self.result_detail = demoResult()
         super(Submission, self).save()
 
 

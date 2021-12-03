@@ -40,7 +40,8 @@
                         <p class="card-text">
                             {% for content in content_lines %}
                                 <pre style="line-height: 1em; font-size: 100%" class="pre-code"><a href="#"
-                                                                 value="{{ forloop.counter }}" class="id-code-line">{{ content }}</a></pre>
+                                                                                                   value="{{ forloop.counter }}"
+                                                                                                   class="id-code-line">{{ content }}</a></pre>
                             {% endfor %}
                     </div>
                 </div>
@@ -48,10 +49,12 @@
 
             <div class="col-md-6">
                 <div class="card mb-6 border-0">
-                    <div class="card-body"  id="result-card" result-data-url="{{ result_url }}">
+                    <div class="card-body" id="result-card" result-data-url="{{ result_url }}">
                         <h6>Simulation Result</h6>
                         <p class="card-text">
-                            <div id="result-text"><pre>Please click on the code to see Memory and Register status</pre></div>
+                        <div id="result-text">
+                            <pre>Please click on the code to see Memory and Register status</pre>
+                        </div>
 
                     </div>
                 </div>
@@ -59,6 +62,44 @@
         </div>
     </div>
 
+    {% if request.user.is_staff %}
+        <br/>
+        <hr class="featurette-divider"><br/>
+        <div class="write-feedback-card">
+            <h3>Leave your feedback:</h3>
+            {% if new_feedback %}
+                <div class="alert alert-success" role="alert">
+                    Feedback submitted!
+                </div>
+            {% else %}
+                <form method="post">
+                    {{ feedback_form.as_p }}
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+                </form>
+            {% endif %}
+
+
+        </div>
+
+    {% endif %}
+
+    {% if feedbacks %}
+    <hr class="featurette-divider"><br/>
+    <h3>Feedbacks:</h3>
+    <div class="feedback-container">
+    {% for feedback in feedbacks %}
+        <div class="feedback" style="padding: 10px;">
+            <p class="font-weight-bold">
+                {{ feedback.owner }}
+                <span class="text-muted font-weight-normal">
+                                &nbsp;{{ feedback.date }}
+                            </span>
+            </p>
+            {{ feedback.content | linebreaks }}
+        </div>
+    {% endfor %}
+    {% endif %}
 
 
 {% endblock %}

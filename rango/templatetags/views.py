@@ -8,6 +8,7 @@ from rango.models import Feedback
 from rango.forms import CategoryForm
 from django.shortcuts import redirect
 from rango.forms import PageForm
+from rango.forms import FeedbackForm
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
@@ -323,22 +324,50 @@ def upload_code(request):
 
 @login_required
 def submission_detail(request, submission_id):
-    context_dict ={}
-    result_url = reverse_lazy("rango:ajax_load_results")
     submission = Submission.objects.get(id=int(submission_id))
-    title = str(submission.title)
-    cpu = submission.cpu
-    family = cpu.family
-    result = submission.result
-    content = submission.content
+    context_dict = {}
+    if int(request.user.id) == int(submission.owner.id) or request.user.is_staff:
+        result_url = reverse_lazy("rango:ajax_load_results")
+        title = str(submission.title)
+        cpu = submission.cpu
+        family = cpu.family
+        result = submission.result
+        content = submission.content
+        feedbacks = submission.referring_submission.filter().order_by('-date')
+        context_dict['title'] = title
+        context_dict['cpu'] = cpu
+        context_dict['family'] = family
+        context_dict['result'] = result
+        context_dict['content_lines'] = listify_assembly(content)
+        context_dict['result_url'] = result_url
+        context_dict['submission'] = submission.id
+        context_dict['feedbacks'] = feedbacks
 
-    context_dict['title'] = title
-    context_dict['cpu'] = cpu
-    context_dict['family'] = family
-    context_dict['result'] = result
-    context_dict['content_lines'] = listify_assembly(content)
-    context_dict['result_url'] = result_url
-    context_dict['submission'] = submission.id
+    else:
+        context_dict['title'] = "NOT AUTHORIZED"
+
+    # To post a feedback
+    if request.user.is_staff or request.user.is_superuser:
+        new_feedback = None
+        feedback_form = FeedbackForm()
+        # print("!!!!!!")
+        if request.method == 'POST':
+            feedback_form = FeedbackForm(request.POST)
+
+            if feedback_form.is_valid():
+                new_feedback = feedback_form.save(commit=False)
+                new_feedback.referring_submission = submission
+                new_feedback.owner = request.user
+                new_feedback.save()
+                return redirect(reverse('rango:submission_detail',
+                                        kwargs={'submission_id': int(submission_id)}))
+            else:
+                new_feedback = FeedbackForm()
+
+        context_dict['new_feedback'] = new_feedback
+        context_dict['feedback_form'] = feedback_form
+
+
     # format_assembly(content)
 
     return render(request, 'rango/submission_detail.html', context=context_dict)
@@ -366,36 +395,39 @@ def load_result(request):
     line_number = request.GET.get('line_number')
     submission_id = request.GET.get('submission')
     submission_obj = Submission.objects.get(pk=submission_id)
-    line_result = "this is result line " + line_number
+    line_result = "Demo result, the result does not reflect to what the code changes!"
 
-    if int(request.user.id) != int(submission_obj.owner.id):
+    if int(request.user.id) == int(submission_obj.owner.id) or request.user.is_staff:
+
+        raw_result = submission_obj.result_detail
+        result = json.loads(raw_result)
+        memory_used = result['memory']
+        mem_output = OrderedDict()
+        reg_output = OrderedDict()
+
+        for loc in memory_used:
+            for line in range(1, int(line_number) + 1):
+                # print(result['data_memory'][str(line)].keys())
+                if str(loc) in result['data_memory'][str(line)].keys():
+                    mem_output[loc] = result['data_memory'][str(line)][loc]
+
+
+        register_content = result['register']
+        # register must store all the registers, does not care if it changes
+        for line in range(1, int(line_number) + 1):
+            for key in register_content[str(line)].keys():
+                reg_output[key] = register_content[str(line)][key]
+
+
+        context_dict['memory'] = mem_output
+        context_dict['register'] = reg_output
+        context_dict['result'] = line_result
+
+    else:
         line_result = "Warning, unauthorized access of othet's result"
         context_dict['result'] = line_result
         return render(request, template_name='rango/load_submission_results.html', context=context_dict)
 
-    raw_result = submission_obj.result_detail
-    result = json.loads(raw_result)
-    memory_used = result['memory']
-    mem_output = OrderedDict()
-    reg_output = OrderedDict()
-
-    for loc in memory_used:
-        for line in range(1, int(line_number) + 1):
-            # print(result['data_memory'][str(line)].keys())
-            if str(loc) in result['data_memory'][str(line)].keys():
-                mem_output[loc] = result['data_memory'][str(line)][loc]
-
-
-    register_content = result['register']
-    # register must store all the registers, does not care if it changes
-    for line in range(1, int(line_number) + 1):
-        for key in register_content[str(line)].keys():
-            reg_output[key] = register_content[str(line)][key]
-
-
-    context_dict['memory'] = mem_output
-    context_dict['register'] = reg_output
-    context_dict['result'] = line_result
     return render(request, template_name='rango/load_submission_results.html', context=context_dict)
 
 
