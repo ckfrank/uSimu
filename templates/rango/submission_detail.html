@@ -14,7 +14,8 @@
     <input class="text" id="submission" type="hidden" value="{{ submission }}" readonly="readonly">
 
     <div class="select2-container">
-        <h6>CPU Family: {{ family }} <br/> CPU: {{ cpu }}</h6>
+        <h6>CPU Family: <code style="color: black">{{ family }}</code> <br/> CPU: <code
+                style="color: black">{{ cpu }}</code></h6>
         <h6>Submission Status:
             {% if result == "Success" %}
                 <a style="color: #6FB07F">{{ result }}</a>
@@ -39,9 +40,7 @@
                         <h6>Code</h6>
                         <p class="card-text">
                             {% for content in content_lines %}
-                                <pre style="line-height: 1em; font-size: 100%" class="pre-code"><a href="#"
-                                                                                                   value="{{ forloop.counter }}"
-                                                                                                   class="id-code-line">{{ content }}</a></pre>
+                                <pre style="line-height: 1em; font-size: 100%" class="pre-code"><a href="#" value="{{ forloop.counter }}" class="id-code-line">{{ content }}</a></pre>
                             {% endfor %}
                     </div>
                 </div>
@@ -85,20 +84,20 @@
     {% endif %}
 
     {% if feedbacks %}
-    <hr class="featurette-divider"><br/>
-    <h3>Feedbacks:</h3>
-    <div class="feedback-container">
-    {% for feedback in feedbacks %}
-        <div class="feedback" style="padding: 10px;">
-            <p class="font-weight-bold">
-                {{ feedback.owner }}
-                <span class="text-muted font-weight-normal">
+        <hr class="featurette-divider"><br/>
+        <h3>Feedbacks:</h3>
+        <div class="feedback-container">
+        {% for feedback in feedbacks %}
+            <div class="feedback" style="padding: 10px;">
+                <p class="font-weight-bold">
+                    {{ feedback.owner }}
+                    <span class="text-muted font-weight-normal">
                                 &nbsp;{{ feedback.date }}
                             </span>
-            </p>
-            {{ feedback.content | linebreaks }}
-        </div>
-    {% endfor %}
+                </p>
+                {{ feedback.content | linebreaks }}
+            </div>
+        {% endfor %}
     {% endif %}
 
 
