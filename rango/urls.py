@@ -1,5 +1,5 @@
 from django.urls import path
-from rango.templatetags import views
+from rango import views
 
 # from django.contrib import admin
 
